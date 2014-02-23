@@ -6,6 +6,8 @@ public class ObstacleSpawner : MonoBehaviour {
     public float SpawnDelay = 2.0F;
     public GameObject PrefabToSpawn;
     public bool IsSpawning = true;
+    public float RangeBottom = -11.5F;
+    public float RangeTop = -7F;
 
     private float CurrentTime = 0F;
     private Random rand = new Random();
@@ -23,7 +25,7 @@ public class ObstacleSpawner : MonoBehaviour {
             if (CurrentTime <= 0)
             {
                 // Spawn thing
-                Vector3 spawnPos = new Vector3(transform.position.x, Random.Range(-11.5F, -7F), transform.position.z);
+                Vector3 spawnPos = new Vector3(transform.position.x, Random.Range(RangeBottom, RangeTop), transform.position.z);
                 Instantiate(PrefabToSpawn, spawnPos, Quaternion.identity);
 
                 ResetTimer();

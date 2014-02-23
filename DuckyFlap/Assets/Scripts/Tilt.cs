@@ -8,11 +8,16 @@ public class Tilt : MonoBehaviour {
     public float topAngle = 90F;
     public float lowAngle = -90F;
 
+    public AudioClip pickup;
+    public AudioClip explode;
+    public AudioClip wing;
+
     private Vector3 _origPos;
     private bool pressed = false;
     private Animator animator;
     private GameObject scoreKeeper;
     private bool hasExploded = false;
+    private Flash flasher;
 
     private int score = 0;
 
@@ -21,6 +26,9 @@ public class Tilt : MonoBehaviour {
         _origPos = transform.position;
         animator = GetComponent<Animator>();
         scoreKeeper = GameObject.FindWithTag("Score");
+        GameObject f = GameObject.FindWithTag("Flash");
+        if (f != null)
+            flasher = f.GetComponent<Flash>();
     }
 
     void Update()
@@ -42,8 +50,11 @@ public class Tilt : MonoBehaviour {
             animator.SetBool("Exploded", true);
 
             // Set spawner to stop spawning
-            GameObject spawner = GameObject.FindGameObjectWithTag("Respawn");
-            spawner.GetComponent<ObstacleSpawner>().IsSpawning = false;
+            GameObject[] spawners = GameObject.FindGameObjectsWithTag("Respawn");
+            for (int i = 0; i < spawners.Length; i++)
+            {
+                spawners[i].GetComponent<ObstacleSpawner>().IsSpawning = false;
+            }
 
             // Stop moving Obstacles
             GameObject[] Obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
@@ -54,7 +65,18 @@ public class Tilt : MonoBehaviour {
                     ob.speed = 0;
             }
 
+            // Set ourselves as exploded
             hasExploded = true;
+
+            // Flash the screen
+            flasher.StartFlash();
+
+            // Play Explosion Sound
+            audio.clip = explode;
+            audio.Play();
+
+            // Show menu
+            GameObject.FindGameObjectWithTag("RestartMenu").GetComponent<RestartMenu>().Show();
         }
     }
 
@@ -63,6 +85,9 @@ public class Tilt : MonoBehaviour {
         if(collider.tag.Contains("Goal"))
         {
             score++;
+            audio.clip = pickup;
+            audio.Play();
+            Destroy(collider.gameObject);
             scoreKeeper.GetComponent<OutlinedText>().SetText(score.ToString());
         }
     }
@@ -93,6 +118,8 @@ public class Tilt : MonoBehaviour {
             animator.SetBool("IsFlapping", true);
             rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, hopSpeed);
             pressed = false;
+            audio.clip = wing;
+            audio.Play();
         }
 	}
 }
