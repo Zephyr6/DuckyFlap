@@ -10,7 +10,6 @@ public class ObstacleSpawner : MonoBehaviour {
     public float RangeTop = -7F;
 
     private float CurrentTime = 0F;
-    private Random rand = new Random();
 
     private void ResetTimer()
     {

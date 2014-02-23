@@ -5,6 +5,6 @@ public class RestartOnClick : MonoBehaviour {
 
     void OnMouseUp()
     {
-        Application.LoadLevel(Application.loadedLevel);
+        Application.LoadLevel(0);
     }
 }
